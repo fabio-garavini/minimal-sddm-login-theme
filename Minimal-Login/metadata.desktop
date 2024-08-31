@@ -1,0 +1,14 @@
+[SddmGreeterTheme]
+Name=Minimal-Login
+Description=stylish login theme
+Author=fabio-garavini
+Copyright=(c) 2024, Fabio Garavini
+License=gpl3.0
+Type=sddm-theme
+Version=1.0
+Website=https://github.com/fabio-garavini
+Screenshot=screenshot.png
+MainScript=Main.qml
+ConfigFile=theme.conf
+Theme-Id=Minimal-Login
+Theme-API=2.0

@@ -1,0 +1,1 @@
+# Minimal SDDM Login Theme
