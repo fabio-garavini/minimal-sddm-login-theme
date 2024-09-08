@@ -72,29 +72,52 @@ Rectangle {
         anchors.rightMargin: 40
         anchors.topMargin: 30
 
-        height: 22
         spacing: 10
 
         ComboBox {
             id: session
-            height: 22
-            width: 200
             model: sessionModel
             textRole: "name"
-            displayText: ""
+            displayText: currentText
+            font.pointSize: 10
             currentIndex: sessionModel.lastIndex
+
+            width: 150
+            height: 30
+
             background: Rectangle {
-                implicitWidth: parent.width
                 implicitHeight: parent.height
-                color: "transparent"
+                implicitWidth: parent.width
+                color: "#222"
+                opacity: 0.8
+                radius: 10
             }
 
             delegate: MenuItem {
                 id: menuitems
-                width: slistview.width * 4
-                text: session.textRole ? (Array.isArray(session.model) ? modelData[session.textRole] : model[session.textRole]) : modelData
+                width: slistview.width
                 highlighted: session.highlightedIndex === index
                 hoverEnabled: session.hoverEnabled
+
+                contentItem: Text {
+                    leftPadding: menuitems.indicator.width
+                    rightPadding: menuitems.arrow.width
+                    text: session.textRole ? (Array.isArray(session.model) ? modelData[session.textRole] : model[session.textRole]) : modelData
+                    opacity: enabled ? 1.0 : 0.7
+                    color: "#ffffff"
+                    horizontalAlignment: Text.AlignLeft
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
+                }
+
+                background: Rectangle {
+                    implicitWidth: menuitems.width
+                    implicitHeight: menuitems.height
+                    opacity: menuitems.highlighted ? 0.2 : 0
+                    radius: 10
+                    color: "#fff"
+                }
+
                 onClicked: {
                     ava.source = "/var/lib/AccountsService/icons/" + user.currentText
                     session.currentIndex = index
@@ -102,6 +125,7 @@ Rectangle {
                     session.popup.close()
                 }
             }
+
             indicator: Rectangle{
                 anchors.right: parent.right
                 anchors.rightMargin: 9
@@ -116,11 +140,31 @@ Rectangle {
                     source: "images/conf.svg"
                 }
             }
+
+            contentItem: Text {
+                leftPadding: kb.spacing
+                rightPadding: session.indicator.width + session.spacing
+
+                text: session.displayText
+                font: session.font
+                color: "#fff"
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                elide: Text.ElideRight
+            }
+
             popup: Popup {
-                width: parent.width
+                width: 250
                 height: parent.height * menuitems.count
                 implicitHeight: slistview.contentHeight
                 margins: 0
+                background: Rectangle {
+                    implicitHeight: parent.height
+                    implicitWidth: parent.width
+                    color: "#222"
+                    opacity: 1
+                    radius: 10
+                }
                 contentItem: ListView {
                     id: slistview
                     clip: true
@@ -135,85 +179,105 @@ Rectangle {
 
         }
 
-        Text {
+        ComboBox {
             id: kb
-            anchors.fill: parent.fill
-            verticalAlignment: Text.AlignVCenter
-            color: "#eff0f1"
-            text: keyboard.layouts[keyboard.currentLayout].shortName
+            model: keyboard.layouts
+            displayText: currentValue.shortName
             font.pointSize: 10
-            font.weight: Font.DemiBold
-        }
+            currentIndex: keyboard.currentLayout
 
-        Item {
-            height: 22
-            width: 22
+            width: 100
+            height: 30
 
-            Image {
-                id: reboot
-                height: 22
-                width: 22
-                source: "images/system-reboot.svg"
-                fillMode: Image.PreserveAspectFit
+            background: Rectangle {
+                implicitHeight: parent.height
+                implicitWidth: parent.width
+                color: "#222"
+                opacity: 0.8
+                radius: 10
+            }
 
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onEntered: {
-                        reboot.source = "images/system-reboot-hover.svg"
-                        var component = Qt.createComponent(
-                                    "components/RebootToolTip.qml")
-                        if (component.status === Component.Ready) {
-                            var tooltip = component.createObject(reboot)
-                            tooltip.x = -100
-                            tooltip.y = 40
-                            tooltip.destroy(600)
-                        }
-                    }
-                    onExited: {
-                        reboot.source = "images/system-reboot.svg"
-                    }
-                    onClicked: {
-                        reboot.source = "images/system-reboot-pressed.svg"
-                        sddm.reboot()
-                    }
+            delegate: MenuItem {
+                id: kbmenuitems
+                width: kblistview.width
+                highlighted: kb.highlightedIndex === index
+                hoverEnabled: kb.hoverEnabled
+
+                contentItem: Text {
+                    leftPadding: kbmenuitems.indicator.width
+                    rightPadding: kbmenuitems.arrow.width
+                    text: modelData.shortName
+                    opacity: enabled ? 1.0 : 0.7
+                    color: "#ffffff"
+                    horizontalAlignment: Text.AlignLeft
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
+                }
+
+                background: Rectangle {
+                    implicitWidth: kbmenuitems.width
+                    implicitHeight: kbmenuitems.height
+                    opacity: kbmenuitems.highlighted ? 0.2 : 0
+                    radius: 10
+                    color: "#fff"
+                }
+
+                onClicked: {
+                    kb.popup.close()
                 }
             }
-        }
 
-        Item {
-            height: 22
-            width: 22
-
-            Image {
-                id: shutdown
-                height: 22
+            indicator: Rectangle{
+                anchors.right: parent.right
+                anchors.rightMargin: 9
+                height: parent.height
                 width: 22
-                source: "images/system-shutdown.svg"
-                fillMode: Image.PreserveAspectFit
-
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onEntered: {
-                        shutdown.source = "images/system-shutdown-hover.svg"
-                        var component = Qt.createComponent("components/ShutdownToolTip.qml")
-                        if (component.status === Component.Ready) {
-                            var tooltip = component.createObject(shutdown)
-                            tooltip.x = -100
-                            tooltip.y = 40
-                            tooltip.destroy(600)
-                        }
-                    }
-                    onExited: {
-                        shutdown.source = "images/system-shutdown.svg"
-                    }
-                    onClicked: {
-                        shutdown.source = "images/system-shutdown-pressed.svg"
-                        sddm.powerOff()
-                    }
+                color: "transparent"
+                Image{
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: parent.width
+                    height: width
+                    fillMode: Image.PreserveAspectFit
+                    source: "images/keyboard.svg"
                 }
             }
+
+            contentItem: Text {
+                leftPadding: kb.spacing
+                rightPadding: kb.indicator.width + kb.spacing
+
+                text: kb.displayText
+                font: kb.font
+                color: "#fff"
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                elide: Text.ElideRight
+            }
+
+            popup: Popup {
+                width: 100
+                height: parent.height * kbmenuitems.count
+                implicitHeight: kblistview.contentHeight
+                margins: 0
+                background: Rectangle {
+                    implicitHeight: parent.height
+                    implicitWidth: parent.width
+                    color: "#222"
+                    opacity: 1
+                    radius: 10
+                }
+                contentItem: ListView {
+                    id: kblistview
+                    clip: true
+                    anchors.fill: parent
+                    model: kb.model
+                    spacing: 0
+                    highlightFollowsCurrentItem: true
+                    currentIndex: kb.highlightedIndex
+                    delegate: kb.delegate
+                }
+            }
+
         }
     }
 
@@ -233,7 +297,7 @@ Rectangle {
             id: listuser
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 40
+            anchors.bottomMargin: 240
             model: userModel
             height: userModel.count*(sizeAvatar*.9)
             verticalLayoutDirection : ListView.TopToBottom
@@ -245,6 +309,7 @@ Rectangle {
                 id: delegate_
                 width: sizeAvatar*.9
                 height: sizeAvatar*.9
+                anchors.horizontalCenter: parent.horizontalCenter
 
                 Image {
                     source: model.icon
@@ -261,14 +326,14 @@ Rectangle {
                 }
                 Rectangle {
                     id: resalt
-                    color: "#ff991c"
+                    color: "#00a86b"
                     width: delegate_.width/3.5
                     height: width
                     radius: width/2
                     border.color: "white"
                     border.width: width/14
                     visible: index === userModel.lastIndex
-                    anchors.bottom: parent.bottom
+                    anchors.top: parent.top
                     anchors.right: parent.right
                     Image {
                         id: palomita
@@ -283,7 +348,7 @@ Rectangle {
                 }
                 Text {
                     text: model.name
-                    color: "white"
+                    color: "#fff"
                     font.bold: true
                     font.pixelSize: sizeAvatar/6
                     anchors.verticalCenter: parent.verticalCenter
@@ -366,13 +431,13 @@ Rectangle {
             text: user.currentText
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: password.top
-            anchors.bottomMargin: 40
+            anchors.bottomMargin: 30
             font.pixelSize: 20
             font.family: fontbold.name
             font.capitalization: Font.Capitalize
             font.weight: Font.DemiBold
             visible: listuser.visible ? false : true
-            color: "white"
+            color: "#fff"
             layer.enabled: true
                 layer.effect: DropShadow {
                 horizontalOffset: 1
@@ -385,8 +450,8 @@ Rectangle {
         TextField {
             id: password
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 80
+            anchors.bottom: powerButtons.top
+            anchors.bottomMargin: 60
             height: 32
             width: 250
             color: "#fff"
@@ -401,8 +466,8 @@ Rectangle {
             background: Rectangle {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
-                color: "#222"
-                opacity: 0.2
+                color: keyboard.capsLock ? "#FF0000" : "#222"
+                opacity:keyboard.capsLock ? 0.5 :  0.2
                 radius: 15
             }
 
@@ -460,6 +525,94 @@ Rectangle {
                         }
                     }
                 ]
+            }
+        }
+
+        RowLayout {
+            id: powerButtons
+            anchors.bottom: parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottomMargin: 20
+
+            height: 50
+            spacing: 40
+
+            Item {
+                width: parent.height
+                height: parent.height
+
+                Rectangle {
+                    id: shutdown
+                    width: parent.height
+                    height: parent.height
+                    color: "#222"
+                    opacity: 0
+                    radius: 10
+                }
+
+                Image {
+                    height: parent.height -10
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    source: "images/system-shutdown.svg"
+                    fillMode: Image.PreserveAspectFit
+                    sourceSize: Qt.size(parent.height-10, parent.height-10)
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onExited: {
+                        shutdown.opacity = 0
+                    }
+                    onEntered: {
+                        shutdown.opacity = 0.2
+                    }
+                    onClicked: {
+                        shutdown.opacity = 0.4
+                        sddm.powerOff()
+                    }
+                }
+            }
+
+            Item {
+                width: parent.height
+                height: parent.height
+
+                Rectangle {
+                    id: reboot
+                    width: parent.height
+                    height: parent.height
+                    color: "#222"
+                    opacity: 0
+                    radius: 10
+                }
+
+                Image {
+                    height: parent.height -10
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    source: "images/system-reboot.svg"
+                    fillMode: Image.PreserveAspectFit
+                    sourceSize: Qt.size(parent.height-10, parent.height-10)
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onExited: {
+                        reboot.opacity = 0
+                    }
+                    onEntered: {
+                        reboot.opacity = 0.2
+                    }
+                    onClicked: {
+                        reboot.opacity = 0.4
+                        sddm.reboot()
+                    }
+                }
             }
         }
 

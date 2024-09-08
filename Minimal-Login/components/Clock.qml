@@ -11,8 +11,22 @@ ColumnLayout {
         source: "../fonts/SFUIText-Semibold.otf"
     }
     readonly property bool softwareRendering: GraphicsInfo.api === GraphicsInfo.Software
+
+    Timer {
+        id: timer
+        interval: 100
+        repeat: true
+        running: true
+
+        onTriggered: {
+            var now = new Date();
+            timeLabel.text = now.toLocaleTimeString(Qt.locale(), Locale.ShortFormat)
+            dateLabel.text = now.toLocaleDateString(Qt.locale(), Locale.LongFormat)
+        }
+    }
+
     Label {
-        text: Qt.formatDateTime(new Date(), "dddd, MMMM d")
+        id: dateLabel
         color: "white"
         opacity: 0.5
         style: softwareRendering ? Text.Outline : Text.Normal
@@ -24,8 +38,9 @@ ColumnLayout {
         font.family: fontbold.name
 
     }
+
     Label {
-        text: Qt.formatDateTime(new Date(), "HH:mm")
+        id: timeLabel
         color: "white"
         opacity: 0.5
         style: softwareRendering ? Text.Outline : Text.Normal
