@@ -30,6 +30,48 @@ On the top right corner you can find your current keyboard layout and a drop dow
 
 ## Setup ⚙️
 
+### 0. Dependencies 📦
+
+This theme requires **SDDM 0.21 or newer** built with Qt6 support, plus the Qt6 QML runtime modules used by the theme:
+
+| QML module | Used for |
+|-----|-----|
+| `QtQuick`, `QtQuick.Controls`, `QtQuick.Layouts` | UI components |
+| `Qt5Compat.GraphicalEffects` | blur, shadows and avatar mask effects |
+| `QtQuick.VirtualKeyboard` *(optional)* | on-screen keyboard |
+
+**Arch / CachyOS:**
+
+```sh
+sudo pacman -S sddm qt6-declarative qt6-5compat
+# optional on-screen keyboard
+sudo pacman -S qt6-virtualkeyboard
+```
+
+**Debian / Ubuntu:**
+
+```sh
+sudo apt install sddm qml6-module-qtquick-controls qml6-module-qtquick-layouts qml6-module-qt5compat-graphicaleffects
+# optional on-screen keyboard
+sudo apt install qml6-module-qtquick-virtualkeyboard
+```
+
+**Fedora:**
+
+```sh
+sudo dnf install sddm qt6-qtquickcontrols2 qt6-qt5compat
+# optional on-screen keyboard
+sudo dnf install qt6-qtvirtualkeyboard
+```
+
+**openSUSE:**
+
+```sh
+sudo zypper install sddm qt6-declarative-imports qt6-qt5compat-imports
+# optional on-screen keyboard
+sudo zypper install qt6-virtualkeyboard-imports
+```
+
 ### 1. Download ⬇️
 
 > [!IMPORTANT]

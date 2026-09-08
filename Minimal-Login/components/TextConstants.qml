@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick
 
 QtObject {
     readonly property string capslockWarning:   qsTr("Warning, Caps Lock is ON!")

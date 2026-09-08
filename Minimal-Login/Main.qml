@@ -1,8 +1,7 @@
-import QtQuick 2.8
-import QtQuick.Controls 2.1
-import QtGraphicalEffects 1.15
-import QtQuick.Layouts 1.2
-import QtQuick.Controls.Styles 1.4
+import QtQuick
+import QtQuick.Controls
+import Qt5Compat.GraphicalEffects
+import QtQuick.Layouts
 import "components"
 
 
@@ -13,6 +12,8 @@ Rectangle {
     LayoutMirroring.childrenInherit: true
     property int sizeAvatar: 130
     property int longitudMasLarga: 0
+    property int imageFadeIn: 250
+    property int imageFadeOut: 250
     TextConstants {
         id: textConstants
     }
@@ -29,10 +30,9 @@ Rectangle {
     }
     Connections {
         target: sddm
-        onLoginSucceeded: {
-
+        function onLoginSucceeded() {
         }
-        onLoginFailed: {
+        function onLoginFailed() {
             password.placeholderText = textConstants.loginFailed
             password.placeholderTextColor = "white"
             password.text = ""
@@ -528,6 +528,18 @@ Rectangle {
             }
         }
 
+        Text {
+            id: errorMsgContainer
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: password.bottom
+            anchors.topMargin: 8
+            visible: false
+            color: "#ff6b6b"
+            font.pixelSize: 14
+            font.family: fontbold.name
+            text: textConstants.loginFailed
+        }
+
         RowLayout {
             id: powerButtons
             anchors.bottom: parent.bottom
@@ -617,13 +629,6 @@ Rectangle {
         }
 
 
-
-        Keys.onPressed: {
-            if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                sddm.login(user.currentText, password.text, session.currentIndex)
-                event.accepted = true
-            }
-        }
 
         // Custom ComboBox for hack colors on DropDownMenu
 

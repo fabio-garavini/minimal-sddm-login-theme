@@ -1,6 +1,6 @@
-import QtQuick 2.8
-import QtQuick.Layouts 1.1
-import QtQuick.Controls 2.5
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
 
 ColumnLayout {
     spacing: 2
